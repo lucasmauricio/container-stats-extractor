@@ -76,8 +76,8 @@ class ContainerStatsExtractor(threading.Thread):
         myData["memory_limit"] = round( stsObj["memory_stats"]["limit"] / 1024.0 / 1024.0 , 2 )
         memoryPercent = stsObj["memory_stats"]["usage"] / stsObj["memory_stats"]["limit"] * 100
         myData["memory_percent"] = "{0:.2f}".format(memoryPercent)
-        myData["network_in"] = stsObj["networks"]["eth0"]["rx_bytes"] / 1024.0 
-        myData["network_out"] = stsObj["networks"]["eth0"]["tx_bytes"] / 1024.0 
+        myData["network_in"] = round( stsObj["networks"]["eth0"]["rx_bytes"] / 1024.0 , 2 )
+        myData["network_out"] = round( stsObj["networks"]["eth0"]["tx_bytes"] / 1024.0 , 2 )
         #TODO get disk io
         #myData["disk_io_read"] = stsObj["blkio_stats"]["io_service_bytes_recursive"].first["value"] / 1024.0 / 1024.0 
         
