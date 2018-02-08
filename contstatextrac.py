@@ -115,12 +115,7 @@ class ContainerStatsExtractor(threading.Thread):
 
     def run(self):
         while True:
-            try:
-                #self.__counter = self.__counter+1
-                #print(self.__counter)
-                self.persist_container_stats()
-            except KeyboardInterrupt:
-                sys.exit(0)
+            self.persist_container_stats()
 
 
 
@@ -137,4 +132,10 @@ if __name__ == '__main__':
     #cont.persist_container_stats()
     
     cont.start_monitoring()
+    while True:
+        try:
+            pass
+        except KeyboardInterrupt:
+            sys.exit(0)
+
 
