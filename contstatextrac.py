@@ -4,11 +4,10 @@ import json
 import os
 import threading
 import sys
+import argparse
 
-#TODO parametrize the file name
 FILE_NAME = "test.csv"
 full_filename = os.path.dirname(os.path.realpath(__file__)) + "/" + FILE_NAME
-#TODO parametrize the container id
 CONTAINER_ID = 'bea3ea3e3ddb'
 
 
@@ -84,6 +83,23 @@ class ContainerStatsExtractor(threading.Thread):
 
 
 if __name__ == '__main__':
+
+    # configuring the parameters parser and storing parameters in global vars
+    parser = argparse.ArgumentParser(description='"API Servidor" to provide/handle employee\'s data.')
+
+    parser.add_argument("-c", "--container", metavar='container_id', 
+                        help='Container ID')
+    parser.add_argument("-o", "--output", 
+                        help="Output filename", metavar="output_filename")
+    args = parser.parse_args()
+
+    if args.container:
+        CONTAINER_ID = args.container
+    if args.output:
+        FILE_NAME = args.output
+        full_filename = os.path.abspath(FILE_NAME)
+
+
     client = docker.from_env()
     cont = ContainerStatsExtractor(client, CONTAINER_ID)
     print ("Application data will be stored at '{}'".format(full_filename))
