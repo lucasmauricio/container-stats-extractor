@@ -6,9 +6,9 @@ import threading
 import sys
 import argparse
 
-FILE_NAME = "test.csv"
-full_filename = os.path.dirname(os.path.realpath(__file__)) + "/" + FILE_NAME
 CONTAINER_ID = 'bea3ea3e3ddb'
+FILE_NAME = "{}.csv".format(CONTAINER_ID)
+full_filename = os.path.dirname(os.path.realpath(__file__)) + "/" + FILE_NAME
 
 
 class ContainerStatsExtractor(threading.Thread):
