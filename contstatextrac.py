@@ -40,26 +40,68 @@ class ContainerStatsExtractor(threading.Thread):
         self.__stats = self.__container.stats(decode=False, stream=False)
     
     def __parse_container_stats(self):
+
+        def calculateCPUPercent(statData):
+            """
+            calculating the CPU pecent utilization as suggested 
+            by @shabbirkagalwala in https://github.com/docker/docker-py/issues/1795
+            """
+            cpuPercent = 0.0
+            previousCPU = statData['precpu_stats']['cpu_usage']['total_usage']
+            cpuDelta = statData['cpu_stats']['cpu_usage']['total_usage'] - previousCPU
+            if 'system_cpu_usage' in statData['precpu_stats']:
+                previousSystem = statData['precpu_stats']['system_cpu_usage']
+            else:
+                previousSystem = 0
+            systemDelta = statData['cpu_stats']['system_cpu_usage'] - previousSystem
+            if systemDelta > 0.0 and cpuDelta > 0.0:
+                cpuPercent = (cpuDelta / systemDelta) * len(statData['cpu_stats']['cpu_usage']['percpu_usage']) * 100
+                return "{0:.2f}".format(cpuPercent)
+            else:
+                return cpuPercent
+
         if not self.__stats:
             #TODO handle this error and return the program flow
             print ("Error: stats data is empty")
             return
 
         stsObj = json.loads(self.__stats.__next__())
+        #print (stsObj)
         
         myData = dict()
         myData["name"] = stsObj["name"] 
         myData["read"] = stsObj["read"] 
         myData["preread"] = stsObj["preread"] 
-        myData["cpu"] = stsObj["cpu_stats"]["cpu_usage"]["total_usage"] / 1024.0 / 1024.0 
+        #myData["cpu"] = stsObj["cpu_stats"]["cpu_usage"]["total_usage"] / 1024.0 / 1024.0 
+        
+        #abc = stsObj['precpu_stats']['system_cpu_usage']
+        #abc = stsObj['precpu_stats']
+        #print (abc)
+        #eee = stsObj['cpu_stats']['system_cpu_usage']
+        #print (eee)
+
+        myData["cpu"] = calculateCPUPercent(stsObj)
         myData["memory_usage"] = stsObj["memory_stats"]["usage"] / 1024.0 / 1024.0 
         myData["memory_limit"] = stsObj["memory_stats"]["limit"] / 1024.0 / 1024.0 
+        memoryPercent = myData["memory_usage"] / myData["memory_limit"] * 100
+        myData["memory_percent"] = "{0:.2f}".format(memoryPercent)
         myData["network_in"] = stsObj["networks"]["eth0"]["rx_bytes"] / 1024.0 
         myData["network_out"] = stsObj["networks"]["eth0"]["tx_bytes"] / 1024.0 
         #TODO get disk io
         #myData["disk_io_read"] = stsObj["blkio_stats"]["io_service_bytes_recursive"].first["value"] / 1024.0 / 1024.0 
         
         return myData
+
+    def pretty_resume_data(self, data):
+        #return "CPU {}%, Memory usage {} MB / limit {} MB ({}%)".format(
+        return "CPU {}%, Memory {}% (usage {} MB / limit {} MB), Network in {}, out {}".format(
+                data["cpu"], 
+                data["memory_percent"],
+                data["memory_usage"], 
+                data["memory_limit"], 
+                data["network_in"], 
+                data["network_out"], 
+            )
 
     def show_container_stats(self):
         return self.__parse_container_stats()
@@ -78,7 +120,7 @@ class ContainerStatsExtractor(threading.Thread):
                 vls.append(value)
             s = ";".join(vls)
             f.write("{}\n".format(s))
-            print("Stat stored.")
+            print("Stat stored: {}".format(self.pretty_resume_data(data_to_store)))
             f.close()
 
     def start_monitoring(self):
