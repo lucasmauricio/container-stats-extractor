@@ -12,13 +12,15 @@ full_filename = os.path.dirname(os.path.realpath(__file__)) + "/" + FILE_NAME
 
 
 class ContainerStatsExtractor(threading.Thread):
+    __client = None
     __container = None
     __stats = None
 
-    def __init__(self, client, container_id):
+    def __init__(self, container_id):
         threading.Thread.__init__(self)
         try:
-            self.__container = client.containers.get(container_id)
+            self.__client = docker.from_env()
+            self.__container = self.__client.containers.get(container_id)
         except Exception:
             print ("An error ocurred when trying to access this container with the id '{}'.".format(container_id))
             self.__container = None
@@ -111,8 +113,7 @@ if __name__ == '__main__':
         full_filename = os.path.abspath(FILE_NAME)
 
 
-    client = docker.from_env()
-    cont = ContainerStatsExtractor(client, CONTAINER_ID)
+    cont = ContainerStatsExtractor(CONTAINER_ID)
     if not cont.is_valid():
         print ("Error: the extractor could not connect to the container with the id {}.\nExiting now.".format(CONTAINER_ID))
         sys.exit(0)
