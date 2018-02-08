@@ -12,18 +12,18 @@ CONTAINER_ID = 'bea3ea3e3ddb'
 def get_container_stats():
     statsObj = container.stats(decode=False, stream=False)
     stats = statsObj
-    meu = dict()
-    meu["name"] = stats["name"] 
-    meu["read"] = stats["read"] 
-    meu["preread"] = stats["preread"] 
-    meu["memory_usage"] = stats["memory_stats"]["usage"] / 1024.0 / 1024.0 
-    meu["memory_limit"] = stats["memory_stats"]["limit"] / 1024.0 / 1024.0 
-    meu["network_in"] = stats["networks"]["eth0"]["rx_bytes"] / 1024.0 
-    meu["network_out"] = stats["networks"]["eth0"]["tx_bytes"] / 1024.0 
-    meu["cpu"] = stats["cpu_stats"]["cpu_usage"]["total_usage"] / 1024.0 / 1024.0 
+    myData = dict()
+    myData["name"] = stats["name"] 
+    myData["read"] = stats["read"] 
+    myData["preread"] = stats["preread"] 
+    myData["memory_usage"] = stats["memory_stats"]["usage"] / 1024.0 / 1024.0 
+    myData["memory_limit"] = stats["memory_stats"]["limit"] / 1024.0 / 1024.0 
+    myData["network_in"] = stats["networks"]["eth0"]["rx_bytes"] / 1024.0 
+    myData["network_out"] = stats["networks"]["eth0"]["tx_bytes"] / 1024.0 
+    myData["cpu"] = stats["cpu_stats"]["cpu_usage"]["total_usage"] / 1024.0 / 1024.0 
     #TODO get disk io
-    #meu["disk_io_read"] = stats["blkio_stats"]["io_service_bytes_recursive"].first["value"] / 1024.0 / 1024.0 
-    return meu
+    #myData["disk_io_read"] = stats["blkio_stats"]["io_service_bytes_recursive"].first["value"] / 1024.0 / 1024.0 
+    return myData
 
 
 def append_data_to_file(data_to_store):
@@ -51,6 +51,6 @@ if __name__ == '__main__':
     container = client.containers.get(CONTAINER_ID)
     print (container.attrs['Config']['Image'])
     print ("Application data will be stored at '{}'".format(full_filename))
-    aa = get_container_stats()
-    append_data_to_file(aa)
+    cont_stats = get_container_stats()
+    append_data_to_file(cont_stats)
 
