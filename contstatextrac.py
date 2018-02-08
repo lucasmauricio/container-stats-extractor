@@ -102,9 +102,10 @@ class ContainerStatsExtractor(threading.Thread):
                     #print("not str")
                     value = "{}".format(value)
                 vls.append(value)
-            print(vls)
+            #print(vls)
             s = ";".join(vls)
             f.write("{}\n".format(s))
+            print("Stat stored.")
             f.close()
 
     def start_monitoring(self):
