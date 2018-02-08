@@ -131,7 +131,9 @@ if __name__ == '__main__':
     #cont_stats = get_container_stats()
     #append_data_to_file(cont_stats)
     #cont.get_stats()
-    cont.get_stats_stream()
-    cont.persist_container_stats()
+    
+    #cont.get_stats_stream()
+    #cont.persist_container_stats()
+    
     cont.start_monitoring()
 
