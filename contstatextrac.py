@@ -16,11 +16,11 @@ def get_container_stats():
     myData["name"] = stats["name"] 
     myData["read"] = stats["read"] 
     myData["preread"] = stats["preread"] 
+    myData["cpu"] = stats["cpu_stats"]["cpu_usage"]["total_usage"] / 1024.0 / 1024.0 
     myData["memory_usage"] = stats["memory_stats"]["usage"] / 1024.0 / 1024.0 
     myData["memory_limit"] = stats["memory_stats"]["limit"] / 1024.0 / 1024.0 
     myData["network_in"] = stats["networks"]["eth0"]["rx_bytes"] / 1024.0 
     myData["network_out"] = stats["networks"]["eth0"]["tx_bytes"] / 1024.0 
-    myData["cpu"] = stats["cpu_stats"]["cpu_usage"]["total_usage"] / 1024.0 / 1024.0 
     #TODO get disk io
     #myData["disk_io_read"] = stats["blkio_stats"]["io_service_bytes_recursive"].first["value"] / 1024.0 / 1024.0 
     return myData
