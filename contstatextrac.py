@@ -17,9 +17,16 @@ class ContainerStatsExtractor(threading.Thread):
 
     def __init__(self, client, container_id):
         threading.Thread.__init__(self)
-        self.__container = client.containers.get(container_id)
-        print (self.__container.attrs['Config']['Image'])
+        try:
+            self.__container = client.containers.get(container_id)
+            print (self.__container.attrs['Config']['Image'])
+        except Exception:
+            print ("An error ocurred when trying to access this container with the id '{}'.".format(container_id))
+            self.__container = None
 
+    def is_valid(self):
+        return self.__container != None
+    
     def get_stats_stream(self):
         self.__stats = self.__container.stats(decode=False, stream=True)
 
@@ -102,6 +109,10 @@ if __name__ == '__main__':
 
     client = docker.from_env()
     cont = ContainerStatsExtractor(client, CONTAINER_ID)
+    if not cont.is_valid():
+        print ("Error: the extractor could not connect to the container with the id {}.\nExiting now.".format(CONTAINER_ID))
+        sys.exit(0)
+
     print ("Application data will be stored at '{}'".format(full_filename))
     
     cont.start_monitoring()
