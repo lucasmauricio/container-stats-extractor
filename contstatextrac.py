@@ -66,20 +66,11 @@ class ContainerStatsExtractor(threading.Thread):
             return
 
         stsObj = json.loads(self.__stats.__next__())
-        #print (stsObj)
         
         myData = dict()
         myData["name"] = stsObj["name"] 
         myData["read"] = stsObj["read"] 
         myData["preread"] = stsObj["preread"] 
-        #myData["cpu"] = stsObj["cpu_stats"]["cpu_usage"]["total_usage"] / 1024.0 / 1024.0 
-        
-        #abc = stsObj['precpu_stats']['system_cpu_usage']
-        #abc = stsObj['precpu_stats']
-        #print (abc)
-        #eee = stsObj['cpu_stats']['system_cpu_usage']
-        #print (eee)
-
         myData["cpu"] = calculateCPUPercent(stsObj)
         myData["memory_usage"] = stsObj["memory_stats"]["usage"] / 1024.0 / 1024.0 
         myData["memory_limit"] = stsObj["memory_stats"]["limit"] / 1024.0 / 1024.0 
@@ -93,7 +84,6 @@ class ContainerStatsExtractor(threading.Thread):
         return myData
 
     def pretty_resume_data(self, data):
-        #return "CPU {}%, Memory usage {} MB / limit {} MB ({}%)".format(
         return "CPU {}%, Memory {}% (usage {} MB / limit {} MB), Network in {}, out {}".format(
                 data["cpu"], 
                 data["memory_percent"],
