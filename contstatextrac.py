@@ -72,9 +72,9 @@ class ContainerStatsExtractor(threading.Thread):
         myData["read"] = stsObj["read"] 
         myData["preread"] = stsObj["preread"] 
         myData["cpu"] = calculateCPUPercent(stsObj)
-        myData["memory_usage"] = stsObj["memory_stats"]["usage"] / 1024.0 / 1024.0 
-        myData["memory_limit"] = stsObj["memory_stats"]["limit"] / 1024.0 / 1024.0 
-        memoryPercent = myData["memory_usage"] / myData["memory_limit"] * 100
+        myData["memory_usage"] = round( stsObj["memory_stats"]["usage"] / 1024.0 / 1024.0 , 2 )
+        myData["memory_limit"] = round( stsObj["memory_stats"]["limit"] / 1024.0 / 1024.0 , 2 )
+        memoryPercent = stsObj["memory_stats"]["usage"] / stsObj["memory_stats"]["limit"] * 100
         myData["memory_percent"] = "{0:.2f}".format(memoryPercent)
         myData["network_in"] = stsObj["networks"]["eth0"]["rx_bytes"] / 1024.0 
         myData["network_out"] = stsObj["networks"]["eth0"]["tx_bytes"] / 1024.0 
