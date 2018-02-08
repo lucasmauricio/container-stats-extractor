@@ -43,6 +43,7 @@ class ContainerStatsExtractor(threading.Thread):
         if not self.__stats:
             #TODO handle this error and return the program flow
             print ("Error: stats data is empty")
+            return
 
         stsObj = json.loads(self.__stats.__next__())
         
@@ -64,7 +65,6 @@ class ContainerStatsExtractor(threading.Thread):
         return self.__parse_container_stats()
 
     def persist_container_stats(self):
-        #print (full_filename)
         data_to_store = self.__parse_container_stats()
         with open(full_filename, "a") as f:
             if os.stat(full_filename).st_size == 0:
@@ -73,12 +73,9 @@ class ContainerStatsExtractor(threading.Thread):
             
             vls = []
             for value in data_to_store.values():
-                #print(value)
                 if not isinstance(value, str):
-                    #print("not str")
                     value = "{}".format(value)
                 vls.append(value)
-            #print(vls)
             s = ";".join(vls)
             f.write("{}\n".format(s))
             print("Stat stored.")
@@ -133,5 +130,3 @@ if __name__ == '__main__':
             pass
         except KeyboardInterrupt:
             sys.exit(0)
-
-
