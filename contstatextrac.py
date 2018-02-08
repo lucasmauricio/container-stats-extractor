@@ -2,6 +2,8 @@ import docker
 import pprint
 import json
 import os
+import threading
+import sys
 
 #TODO parametrize the file name
 FILE_NAME = "test.csv"
@@ -46,11 +48,12 @@ def append_data_to_file(data_to_store):
         f.close()
 
 
-class ContainerStatsExtractor():
+class ContainerStatsExtractor(threading.Thread):
     __container = None
     __stats = None
 
     def __init__(self, client, container_id):
+        threading.Thread.__init__(self)
         self.__container = client.containers.get(container_id)
         print (self.__container.attrs['Config']['Image'])
 
@@ -105,8 +108,18 @@ class ContainerStatsExtractor():
             f.close()
 
     def start_monitoring(self):
-        pass
+        #self.__counter = 0
+        self.get_stats_stream()
+        self.start()
 
+    def run(self):
+        while True:
+            try:
+                #self.__counter = self.__counter+1
+                #print(self.__counter)
+                self.persist_container_stats()
+            except KeyboardInterrupt:
+                sys.exit(0)
 
 
 
@@ -120,4 +133,5 @@ if __name__ == '__main__':
     #cont.get_stats()
     cont.get_stats_stream()
     cont.persist_container_stats()
+    cont.start_monitoring()
 
