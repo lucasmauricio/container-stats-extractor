@@ -45,6 +45,8 @@ class ContainerStatsExtractor(threading.Thread):
             """
             calculating the CPU pecent utilization as suggested 
             by @shabbirkagalwala in https://github.com/docker/docker-py/issues/1795
+
+            #TODO analyze the code in https://github.com/TomasTomecek/sen/blob/67794e176e70fa77d01e2acae381b92e501c0e17/sen/util.py#L162
             """
             cpuPercent = 0.0
             previousCPU = statData['precpu_stats']['cpu_usage']['total_usage']
@@ -78,7 +80,7 @@ class ContainerStatsExtractor(threading.Thread):
         myData["memory_percent"] = "{0:.2f}".format(memoryPercent)
         myData["network_in"] = round( stsObj["networks"]["eth0"]["rx_bytes"] / 1024.0 , 2 )
         myData["network_out"] = round( stsObj["networks"]["eth0"]["tx_bytes"] / 1024.0 , 2 )
-        #TODO get disk io
+        #TODO get disk io (maybe from https://github.com/TomasTomecek/sen/blob/master/sen/util.py#L191)
         #myData["disk_io_read"] = stsObj["blkio_stats"]["io_service_bytes_recursive"].first["value"] / 1024.0 / 1024.0 
         
         return myData
