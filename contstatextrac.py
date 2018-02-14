@@ -6,9 +6,9 @@ import threading
 import sys
 import argparse
 
-CONTAINER_ID = 'bea3ea3e3ddb'
-FILE_NAME = "{}.csv".format(CONTAINER_ID)
-full_filename = os.path.dirname(os.path.realpath(__file__)) + "/" + FILE_NAME
+#CONTAINER_ID = 'bea3ea3e3ddb'
+#FILE_NAME = "{}.csv".format(CONTAINER_ID)
+#full_filename = os.path.dirname(os.path.realpath(__file__)) + "/" + FILE_NAME
 
 
 class ContainerStatsExtractor(threading.Thread):
@@ -142,6 +142,9 @@ if __name__ == '__main__':
     if args.output:
         FILE_NAME = args.output
         full_filename = os.path.abspath(FILE_NAME)
+    else:
+        FILE_NAME = "{}.csv".format(CONTAINER_ID)
+        full_filename = os.path.dirname(os.path.realpath(__file__)) + "/" + FILE_NAME
 
 
     cont = ContainerStatsExtractor(CONTAINER_ID)
