@@ -21,6 +21,7 @@ class ContainerStatsExtractor(threading.Thread):
         try:
             self.__client = docker.from_env()
             self.__container = self.__client.containers.get(container_id)
+            self.__container.start()
         except Exception:
             print ("An error ocurred when trying to access this container with the id '{}'.".format(container_id))
             self.__container = None
